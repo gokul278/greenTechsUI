@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import ButtonsLabel from "@/Components/Buttons/ButtonsLabel";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import SelectInputWithLabel from "@/Components/Input/SelectInputWithLabel";
 
 interface RecordingProps {}
 

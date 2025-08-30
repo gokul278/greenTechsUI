@@ -2,7 +2,7 @@
 
 // import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 // import type { FileData } from "@/Model/CommonModel";
 
 export const RoleList = [
@@ -48,14 +48,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const setRole = (newRole: Role) => {
     setRoleState(newRole);
   };
 
   const refreshToken = async () => {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
     // try {
     //   const res = await axios.get(
