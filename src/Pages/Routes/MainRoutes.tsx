@@ -11,7 +11,7 @@ import { AuthProvider } from "./AuthContext";
 import RoleProtectedRoute from "./RoleProtectedRoute";
 import MasterHeader from "./MasterHeader";
 import RegisterStudent from "../Regsiter/RegisterStudent";
-import AdminMail from "../Mail/AdminMail";
+// import AdminMail from "../Mail/AdminMail";
 import ScrollToTop from "@/lib/ScrollToTop";
 import Unauthorized from "../Unauthorized/Unauthorized";
 import Student from "../Student/Student";
@@ -36,7 +36,7 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
   const adminRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="register" replace /> },
     { path: "register", element: <RegisterStudent /> },
-    { path: "mail", element: <AdminMail /> },
+    // { path: "mail", element: <AdminMail /> },
   ];
 
   const headtrainerRoutes: AppRoute[] = [

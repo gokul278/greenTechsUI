@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Dropdown } from "primereact/dropdown";
+import { Info } from "lucide-react";
 
 interface YearPickerWithLabelProps {
   name: string;
@@ -14,6 +15,7 @@ interface YearPickerWithLabelProps {
   startYear?: number;
   endYear?: number;
   placeholder?: string;
+  errorStatus?: boolean;
 }
 
 const YearPickerWithLabel: React.FC<YearPickerWithLabelProps> = ({
@@ -28,19 +30,28 @@ const YearPickerWithLabel: React.FC<YearPickerWithLabelProps> = ({
   startYear = 1900,
   placeholder = "Select Year",
   endYear = new Date().getFullYear(),
+  errorStatus = false,
 }) => {
   const years = [];
-  for (let year = startYear; year <= endYear; year++) {
-    years.push({ label: year.toString(), value: year });
+
+  if (startYear > endYear) {
+    for (let year = startYear; year >= endYear; year--) {
+      years.push({ label: year.toString(), value: year });
+    }
+  } else {
+    for (let year = startYear; year <= endYear; year++) {
+      years.push({ label: year.toString(), value: year });
+    }
   }
 
   return (
     <div className="w-full">
       <label htmlFor={name} className="font-bold text-gray-700 mb-2 block">
-        {label}
+        {label} {required && <span className="text-[red]">*</span>}
       </label>
       <Dropdown
         id={name}
+        name={name}
         value={value}
         options={years}
         onChange={onChange}
@@ -60,6 +71,14 @@ const YearPickerWithLabel: React.FC<YearPickerWithLabelProps> = ({
         disabled={readonly}
         required={required}
       />
+      {errorStatus && (
+        <label
+          htmlFor={name}
+          className="font-bold text-[red] mt-1 flex gap-1 items-center "
+        >
+          <Info width={15} height={15} /> Field Required Attention
+        </label>
+      )}
     </div>
   );
 };

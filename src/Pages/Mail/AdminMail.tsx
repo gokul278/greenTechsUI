@@ -1,16 +1,24 @@
 import React from "react";
 import ButtonsLabel from "@/Components/Buttons/ButtonsLabel";
-import { useNavigate } from "react-router-dom";
+import type { NewRegisterFormData } from "@/Interfaces/RegisterStudentInterface";
 
-interface AdminMailProps {}
+interface AdminMailProps {
+  formData: NewRegisterFormData;
+  currentUserId: string;
+  currentSelectedCourse: string;
+  handleHandOverTrainer: () => void;
+  loading: boolean;
+}
 
-const AdminMail: React.FC<AdminMailProps> = () => {
-  const navigate = useNavigate();
+const AdminMail: React.FC<AdminMailProps> = ({
+  formData,
+  currentUserId,
+  currentSelectedCourse,
+  handleHandOverTrainer,
+  loading,
+}) => {
   return (
     <div className="px-5 py-3 flex flex-col gap-2">
-      <p className="font-bold mb-3 text-sm text-[#008080]">
-        Registration Confirmation Email
-      </p>
       <div className="w-full flex flex-col justify-between h-full">
         <p className="font-bold mb-3 text-sm text-[#000]">Candidate Details</p>
         <div
@@ -25,7 +33,7 @@ const AdminMail: React.FC<AdminMailProps> = () => {
               Candidate Name
             </p>
             <p className="w-7/12 text-[#000] font-semibold text-xs sm:text-sm">
-              Priya Sharma
+              {formData.fullname}
             </p>
           </div>
           <div className="w-full flex justify-between">
@@ -33,7 +41,7 @@ const AdminMail: React.FC<AdminMailProps> = () => {
               Registration ID
             </p>
             <p className="w-7/12 text-[#000] font-semibold text-xs sm:text-sm">
-              REG2025-045
+              {currentUserId}
             </p>
           </div>
           <div className="w-full flex justify-between">
@@ -41,7 +49,7 @@ const AdminMail: React.FC<AdminMailProps> = () => {
               Course Name
             </p>
             <p className="w-7/12 text-[#000] font-semibold text-xs sm:text-sm">
-              Data Science
+              {currentSelectedCourse}
             </p>
           </div>
         </div>
@@ -49,16 +57,16 @@ const AdminMail: React.FC<AdminMailProps> = () => {
           Email Content
         </p>
         <p className="font-normal mb-3 text-xs sm:text-sm text-[#000]">
-          Dear Priya Sharma,
+          Dear {formData.fullname},
         </p>
         <p className="font-normal mb-3 text-xs sm:text-sm text-[#000]">
-          Congratulations on your successful registration for the Data Science
-          course! Your registration ID is REG2024-045. We are excited to have
-          you join our program.
+          Congratulations on your successful registration for the{" "}
+          {currentSelectedCourse} course! Your registration ID is{" "}
+          {currentUserId}. We are excited to have you join our program.
         </p>
         <p className="font-normal mb-3 text-xs sm:text-sm text-[#000]">
-          Your username is <strong>gokulhk278@gmail.com</strong> and your
-          password is <strong>12345678</strong>. Please use these credentials to
+          Your username is <strong>{formData.emailid}</strong> and your password
+          is <strong>{formData.dob}</strong>. Please use these credentials to
           log in and access your course details.
         </p>
         <p className="font-normal mb-3 text-xs sm:text-sm text-[#000]">
@@ -76,7 +84,9 @@ const AdminMail: React.FC<AdminMailProps> = () => {
         <div className=" md:w-5/12 lg:w-4/12 xl:w-3/12">
           <ButtonsLabel
             onClick={() => {
-              navigate(`/admin/register`);
+              if (!loading) {
+                handleHandOverTrainer();
+              }
             }}
             variant="primary"
           >

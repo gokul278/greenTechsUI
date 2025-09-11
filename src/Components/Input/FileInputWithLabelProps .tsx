@@ -62,9 +62,9 @@ const FileInputWithLabel: React.FC<FileInputWithLabelProps> = ({
 
   return (
     <div className="w-full">
-      {label && (
+      {label.length > 0 && (
         <label htmlFor={name} className="font-bold text-gray-700 mb-2 block">
-          {label} {required && <span className="text-red-500">*</span>}
+          {label} {required && <span className="text-[red]">*</span>}
         </label>
       )}
 

@@ -139,22 +139,25 @@ const CandidateAssignment: React.FC = () => {
         scrollHeight="65vh"
         selectionMode="single"
         value={data}
-        filterDisplay="row"
+        filterDisplay="menu"
       >
         <Column
-          style={{ width: "30%" }}
           field="name"
           header="Candidate name"
           filter
-          showFilterMenu={false}
+          filterField="name"
+          showFilterMenuOptions={false}
+          showFilterOperator={false}
+          showFilterMatchModes={false}
+          showAddButton={false}
           filterElement={(options) => (
             <TextInputWithLabel
               name=" "
               label=""
               value={options.value || ""}
-              onChange={(e) => options.filterApplyCallback(e.target.value)}
+              onChange={(e) => options.filterApplyCallback(e.target.value)} // ✅ applies instantly
               placeholder="Search by name"
-              className="p-column-filter w-full h-9 px-2 rounded-md border border-gray-300"
+              className="w-full h-9 px-2 rounded-md border border-gray-300"
             />
           )}
         />
@@ -163,26 +166,32 @@ const CandidateAssignment: React.FC = () => {
           field="course"
           header="Course name"
           filter
-          showFilterMenu={false} // hide popup menu
+          showFilterMenu={true}
+          showFilterOperator={false}
+          showFilterMatchModes={false}
+          showAddButton={false}
           filterElement={(options) => (
             <SelectInputWithLabel
               name=" "
               label=""
               value={options.value}
               options={courseOptions}
-              onChange={(e) => options.filterApplyCallback(e.value)}
+              onChange={(e) => options.filterApplyCallback(e.value)} // ✅ applies immediately
               placeholder="Select a course"
               className="p-column-filter"
-              // showClear
             />
           )}
-        ></Column>
+        />
         <Column
           style={{ width: "10%" }}
           header="Status"
           field="status"
           filter
-          showFilterMenu={false}
+          filterField="status"
+          showFilterMenuOptions={false} // hides "Starts with / Contains"
+          showFilterOperator={false} // hides AND/OR toggle
+          showFilterMatchModes={false} // hides condition dropdown
+          showAddButton={false} // hides "+ Add Rule"
           body={() => (
             <ButtonsLabel className="h-8 lg:h-8" variant="primary">
               Active
@@ -194,7 +203,7 @@ const CandidateAssignment: React.FC = () => {
               label=""
               value={options.value}
               options={statusOptions}
-              onChange={(e) => options.filterApplyCallback(e.value)}
+              onChange={(e) => options.filterApplyCallback(e.value)} // ✅ applies instantly
               placeholder="Filter by status"
               className="p-column-filter"
             />
@@ -205,19 +214,24 @@ const CandidateAssignment: React.FC = () => {
           field="trainer"
           header="Sub-trainer"
           filter
-          showFilterMenu={false}
+          filterField="trainer"
+          showFilterMenuOptions={false} // ✅ hides default menu operators
+          showFilterOperator={false} // ✅ hides AND/OR
+          showFilterMatchModes={false} // ✅ hides condition dropdown
+          showAddButton={false} // ✅ hides "+ Add Rule"
           filterElement={(options) => (
             <SelectInputWithLabel
               name=" "
               label=""
               value={options.value}
               options={trainerOptions}
-              onChange={(e) => options.filterApplyCallback(e.value)}
-              placeholder="Filter"
+              onChange={(e) => options.filterApplyCallback(e.value)} // ✅ applies instantly
+              placeholder="Filter by trainer"
               className="p-column-filter text-sm"
             />
           )}
         />
+
         <Column
           style={{ width: "10%" }}
           header="Action"

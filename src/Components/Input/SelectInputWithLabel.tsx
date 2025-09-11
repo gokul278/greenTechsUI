@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Dropdown } from "primereact/dropdown";
+import { Info } from "lucide-react";
 
 interface Option {
   label: string;
@@ -18,6 +19,7 @@ interface SelectInputProps {
   required?: boolean;
   disabled?: boolean;
   bgColor?: string;
+  errorStatus?: boolean;
 }
 
 const SelectInputWithLabel: React.FC<SelectInputProps> = ({
@@ -31,16 +33,18 @@ const SelectInputWithLabel: React.FC<SelectInputProps> = ({
   required = false,
   disabled = false,
   bgColor = "#fff",
+  errorStatus = false,
 }) => {
   return (
     <div className="w-full">
       {label.length > 0 && (
         <label htmlFor={name} className="font-bold text-gray-700 mb-2 block">
-          {label} {required && "*"}
+          {label} {required && <span className="text-[red]">*</span>}
         </label>
       )}
       <Dropdown
         id={name}
+        name={name}
         value={value}
         options={options}
         onChange={onChange}
@@ -59,6 +63,14 @@ const SelectInputWithLabel: React.FC<SelectInputProps> = ({
         }}
         required={required}
       />
+      {errorStatus && (
+        <label
+          htmlFor={name}
+          className="font-bold text-[red] mt-1 flex gap-1 items-center "
+        >
+          <Info width={15} height={15} /> Field Required Attention
+        </label>
+      )}
     </div>
   );
 };

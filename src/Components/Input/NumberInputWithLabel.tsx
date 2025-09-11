@@ -1,5 +1,9 @@
 import { cn } from "@/lib/utils";
-import { InputNumber, type InputNumberValueChangeEvent,  } from "primereact/inputnumber";
+import { Info } from "lucide-react";
+import {
+  InputNumber,
+  type InputNumberValueChangeEvent,
+} from "primereact/inputnumber";
 import React from "react";
 
 interface NumberInputWithLabelProps {
@@ -25,6 +29,8 @@ interface NumberInputWithLabelProps {
   maxFractionDigits?: number;
   prefix?: string;
   suffix?: string;
+  errorStatus?: boolean;
+  errormessage?: string;
 }
 
 const NumberInputWithLabel: React.FC<NumberInputWithLabelProps> = ({
@@ -49,11 +55,13 @@ const NumberInputWithLabel: React.FC<NumberInputWithLabelProps> = ({
   maxFractionDigits,
   prefix,
   suffix,
+  errorStatus = false,
+  errormessage = "",
 }) => {
   return (
     <div className="w-full">
       <label htmlFor={name} className="font-bold text-gray-700 mb-2 block">
-        {label}
+        {label} {required && <span className="text-[red]">*</span>}
       </label>
 
       <InputNumber
@@ -88,12 +96,21 @@ const NumberInputWithLabel: React.FC<NumberInputWithLabelProps> = ({
           borderRadius: 10,
           backgroundColor: bgColor,
         }}
-        style={{fontSize:"0.8rem"}}
+        style={{ fontSize: "0.8rem" }}
         className={cn(
           "w-full h-10 lg:h-11 text-xs rounded-2xl focus:border-none",
           className
         )}
       />
+      {errorStatus && (
+        <label
+          htmlFor={name}
+          className="font-bold text-[red] mt-1 flex gap-1 items-center "
+        >
+          <Info width={15} height={15} />{" "}
+          {errormessage.length > 0 ? errormessage : "Field Required Attention"}
+        </label>
+      )}
     </div>
   );
 };

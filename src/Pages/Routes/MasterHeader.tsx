@@ -19,6 +19,8 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  const userData = useAuth();
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       // Check if click is outside menu AND profile image
@@ -52,10 +54,10 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
         label: "Register",
         path: "/admin/register",
       },
-      {
-        label: "Mail",
-        path: "/admin/mail",
-      },
+      // {
+      //   label: "Mail",
+      //   path: "/admin/mail",
+      // },
     ],
     headtrainer: [
       {
@@ -88,7 +90,7 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
       },
     ],
   };
-  const { role } = useAuth();
+  const { role, user } = useAuth();
 
   const menus = role?.type ? roleMenus[role.type] || [] : [];
   const [selectedMenu, setSelectedMenu] = useState<string>("");
@@ -132,7 +134,11 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
             ))}
           </div>
           <img
-            src={DefaultProfile}
+            src={
+              user?.refUserProfile
+                ? `data:${user?.profileImgFile?.contentType};base64,${user?.profileImgFile?.base64Data}`
+                : DefaultProfile
+            }
             onClick={() => {
               setProfileMenu(!profileMenu);
             }}
@@ -140,6 +146,22 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
             alt="logo"
             ref={imgRef}
           />
+          <div
+            onClick={() => {
+              setProfileMenu(!profileMenu);
+            }}
+            className="pl-2 cursor-pointer"
+          >
+            <div className="text-sm font-bold">
+              {userData.user?.refUserName}
+            </div>
+            <div className="text-xs font-bold">
+              {userData.user?.refUserCustId}
+            </div>
+          </div>
+          <div
+            className={`w-auto flex justify-center items-center text-center cursor-pointer text-[#000]`}
+          ></div>
           {profileMenu && (
             <div
               ref={menuRef}
