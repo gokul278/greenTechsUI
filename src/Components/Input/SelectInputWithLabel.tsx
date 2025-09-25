@@ -5,14 +5,14 @@ import { Info } from "lucide-react";
 
 interface Option {
   label: string;
-  value: string | number;
+  value: string | number | boolean;
 }
 
 interface SelectInputProps {
   name: string;
   label: string;
   options: Option[];
-  value?: string | number;
+  value?: string | number | boolean;
   onChange?: (e: any) => void; // PrimeReact dropdown change event
   placeholder?: string;
   className?: string;
