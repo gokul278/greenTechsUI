@@ -1,55 +1,37 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ButtonsLabel from "@/Components/Buttons/ButtonsLabel";
 import { Column } from "primereact/column";
 import SelectInputWithLabel from "@/Components/Input/SelectInputWithLabel";
 import { DataTable } from "primereact/datatable";
 import TextInputWithLabel from "@/Components/Input/TextInputWithLabel";
 import { Dialog } from "primereact/dialog";
-import { X } from "lucide-react";
+import { Loader2Icon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NumberInputWithLabel from "@/Components/Input/NumberInputWithLabel";
 import FileInputWithLabel from "@/Components/Input/FileInputWithLabelProps ";
 import { FileHandlerService } from "@/Services/FileHandlerService";
-import type { TempFilesState } from "@/Interfaces/SubtrainerInterface";
+import type {
+  SubtrainerListModel,
+  TempFilesState,
+} from "@/Interfaces/SubtrainerInterface";
 import { SubtrainerService } from "@/Services/SubtrainerService";
 import LoadingOverlay from "@/Components/Loading/Loading";
+import { Slide, toast, ToastContainer } from "react-toastify";
 
 interface SubtrainerProps {}
 
 const Subtrainer: React.FC<SubtrainerProps> = () => {
-  const candidates = [
-    {
-      name: "Ethan Harper",
-      email: "ethan.harper@example.com",
-      status: "Active",
-    },
-    {
-      name: "Sophia Bennett",
-      email: "sophia.bennett@example.com",
-      status: "Inactive",
-    },
-    {
-      name: "Liam Carter",
-      email: "liam.carter@example.com",
-      status: "Active",
-    },
-    {
-      name: "Olivia Mitchell",
-      email: "olivia.mitchell@example.com",
-      status: "Active",
-    },
-    {
-      name: "Noah Anderson",
-      email: "noah.anderson@example.com",
-      status: "Active",
-    },
-  ];
+  useEffect(() => {
+    getSubtrainer();
+  }, []);
 
-  const [data, _] = useState(candidates);
+  const [data, setData] = useState<SubtrainerListModel[]>([]);
 
-  const statusOptions = [...new Set(candidates.map((c) => c.status))].map(
+  const [loading, setLoading] = useState(false);
+
+  const statusOptions = [...new Set(data.map((c) => c.refUserStatus))].map(
     (t) => ({
-      label: t,
+      label: t === "true" ? `Active` : `Inactive`,
       value: t,
     })
   );
@@ -69,7 +51,24 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
     resume: "",
   });
 
+  const [edtRegistationFormData, setEditRegistratioinFormData] = useState({
+    fullname: "",
+    phonenumber: "",
+    emailid: "",
+    dob: "",
+    currentLocation: "",
+    workexprience: "",
+    aadhar: "",
+    profile_img: "",
+    resume: "",
+  });
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError({
+      status: false,
+      message: "",
+    });
+
     const { name, value } = e.target;
     setNewRegistrationFormData((prev) => ({
       ...prev,
@@ -77,7 +76,7 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
     }));
   };
 
-  const [newFiles, setNewFiles] = useState<TempFilesState>({
+  const [__, setNewFiles] = useState<TempFilesState>({
     profile_img: null,
     resume: null,
   });
@@ -87,17 +86,35 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
     message: "",
   });
 
+  const [registerLoading, setRegisterLoading] = useState(false);
+
+  const getSubtrainer = async () => {
+    setLoading(true);
+    try {
+      const response = await SubtrainerService.getSubtrainer(0);
+      console.log(response);
+      if (response.status) {
+        setData(response.data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  };
+
   const handleProfileImageUpload = useCallback(
     async (file: File) => {
       const formDataImg = new FormData();
       formDataImg.append("profileImage", file);
+      setError({
+        status: false,
+        message: "",
+      });
 
       try {
         const response = await FileHandlerService.uploadImage({
           formImg: formDataImg,
         });
-
-        console.log(response);
 
         if (response.status) {
           setNewRegistrationFormData((prev) => ({
@@ -166,19 +183,69 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
   const handleNewRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setRegisterLoading(true);
+
     try {
       const response = await SubtrainerService.newSubtrainer(
         newRegistrationFormData
       );
 
       if (response.status) {
+        toast.success("Sub Trainer Registration Successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+        setNewRegistrationPopup(false);
+
+        setNewRegistrationFormData({
+          fullname: "",
+          phonenumber: "",
+          emailid: "",
+          dob: "",
+          currentLocation: "",
+          workexprience: "",
+          aadhar: "",
+          profile_img: "",
+          resume: "",
+        });
+
+        getSubtrainer();
       } else {
+        setError({
+          status: true,
+          message: response.message,
+        });
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
+
+    setRegisterLoading(false);
   };
 
   return (
     <div className="px-5 py-3 flex flex-col gap-2">
+      {loading && <LoadingOverlay />}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        transition={Slide}
+      />
       <Dialog
         header="New Sub Trainer Registration Details"
         visible={newRegistrationPopup}
@@ -216,7 +283,6 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
                   "bg-[#008080] text-white",
                   "shadow-[inset_7px_7px_7px_rgba(153,153,153,0.25),inset_-7px_-7px_7px_rgba(235,235,235,0.25)]",
                   "hover:shadow-[inset_9px_9px_9px_rgba(153,153,153,0.28),inset_-9px_-9px_9px_rgba(235,235,235,0.28)]"
-                  //   "active:shadow-[inset_4px_4px_6px_rgba(153,153,153,0.35),inset_-4px_-4px_6px_rgba(235,235,235,0.35)]"
                 )}
               >
                 New Sub Trainer Registration Details
@@ -228,7 +294,7 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
               />
             </div>
           </div>
-          <div className="h-[74vh] overflow-y-auto custom-scroll flex flex-col gap-3 px-3 pb-3">
+          <div className="h-[72vh] overflow-y-auto custom-scroll flex flex-col gap-3 px-3 pb-3">
             <TextInputWithLabel
               type="text"
               name="fullname"
@@ -357,13 +423,23 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
             />
           </div>
           <div className="h-[8vh]">
-            <p className="text-center h-[30px] text-red-500">
+            <p className="text-center h-[30px] text-[red]">
               {error.status && error.message}
             </p>
             <div className="w-full flex justify-center items-center">
               <div className="w-8/12 lg:w-6/12">
-                <ButtonsLabel className="h-8 lg:h-10" variant="primary">
-                  Register
+                <ButtonsLabel
+                  type={registerLoading ? "button" : "submit"}
+                  className="h-8 lg:h-10"
+                  variant="primary"
+                >
+                  {registerLoading ? (
+                    <>
+                      <Loader2Icon size={18} className="animate-spin" />
+                    </>
+                  ) : (
+                    "Register"
+                  )}
                 </ButtonsLabel>
               </div>
             </div>
@@ -423,18 +499,38 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
           <TextInputWithLabel
             type="text"
             name="name"
+            value={edtRegistationFormData.fullname}
             label="Name :"
             placeholder="Enter your name"
             bgColor="#00808054"
-            value="Gokul"
+          />
+          <TextInputWithLabel
+            type="text"
+            name="emailid"
+            value={edtRegistationFormData.emailid}
+            label="Email ID :"
+            placeholder="Enter your email Id"
+            bgColor="#00808054"
+          />
+          <NumberInputWithLabel
+            name="phonenumber"
+            label="Mobile Number :"
+            placeholder="Enter your aadhar number"
+            bgColor="#00808054"
+            useGrouping={false}
+            value={
+              edtRegistationFormData.phonenumber
+                ? parseInt(edtRegistationFormData.phonenumber)
+                : null
+            }
           />
           <TextInputWithLabel
             type="date"
             name="dob"
             label="Date of Birth :"
+            value={edtRegistationFormData.dob}
             placeholder="Select your date of birth"
             bgColor="#00808054"
-            value="19-09-2002"
           />
           <TextInputWithLabel
             type="text"
@@ -442,14 +538,18 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
             label="Trainer Location :"
             placeholder="Enter your location"
             bgColor="#00808054"
-            value="Salem"
+            value={edtRegistationFormData.currentLocation}
           />
           <NumberInputWithLabel
             name="experience"
             label="Trainer Experience :"
             placeholder="Enter your experience"
             bgColor="#00808054"
-            value={1}
+            value={
+              edtRegistationFormData.workexprience
+                ? parseInt(edtRegistationFormData.workexprience)
+                : null
+            }
           />
           <NumberInputWithLabel
             name="aadhar"
@@ -457,7 +557,11 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
             placeholder="Enter your aadhar number"
             bgColor="#00808054"
             useGrouping={false}
-            value={123456789012}
+            value={
+              edtRegistationFormData.aadhar
+                ? parseInt(edtRegistationFormData.aadhar)
+                : null
+            }
           />
           <FileInputWithLabel
             name="profile"
@@ -502,15 +606,11 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
             "inset 7px 7px 7px rgba(153,153,153,0.25), inset -7px -7px 7px rgba(235,235,235,0.25)",
           border: "none",
           borderRadius: 10,
-          //   backgroundColor: "#008080",
-          //   color: "#fff",
         }}
         className="w-12/12 overflow-y-auto p-4 custom-scroll"
       >
         <DataTable
           scrollable
-          // resizableColumns
-          // showGridlines
           scrollHeight="65vh"
           selectionMode="single"
           value={data}
@@ -518,15 +618,15 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
         >
           <Column
             style={{ width: "30%" }}
-            field="name"
+            field="refUserName"
             header="Sub Trainer Name"
             filter
-            filterField="name"
-            showFilterMenu={true} // ✅ keep this TRUE to show popup
-            showFilterMenuOptions={false} // ✅ hides "StartsWith/Contains"
-            showFilterOperator={false} // ✅ hides AND/OR
-            showFilterMatchModes={false} // ✅ hides match mode dropdown
-            showAddButton={false} // ✅ hides "+ Add Rule"
+            filterField="refUserName"
+            showFilterMenu={true}
+            showFilterMenuOptions={false}
+            showFilterOperator={false}
+            showFilterMatchModes={false}
+            showAddButton={false}
             filterElement={(options) => (
               <TextInputWithLabel
                 name=" "
@@ -541,15 +641,15 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
 
           <Column
             style={{ width: "30%" }}
-            field="email"
+            field="refUCMail"
             header="Email ID"
             filter
-            filterField="email"
-            showFilterMenu={true} // ✅ keep this TRUE to show popup
-            showFilterMenuOptions={false} // ✅ hides "StartsWith/Contains"
-            showFilterOperator={false} // ✅ hides AND/OR
-            showFilterMatchModes={false} // ✅ hides match mode dropdown
-            showAddButton={false} // ✅ hides "+ Add Rule"
+            filterField="refUCMail"
+            showFilterMenu={true}
+            showFilterMenuOptions={false}
+            showFilterOperator={false}
+            showFilterMatchModes={false}
+            showAddButton={false}
             filterElement={(options) => (
               <TextInputWithLabel
                 name=" "
@@ -561,21 +661,20 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
               />
             )}
           />
-
           <Column
             style={{ width: "20%" }}
             header="Status"
-            field="status"
+            field="refUserStatus"
             filter
-            filterField="status"
-            showFilterMenu={true} // ✅ keep this TRUE to show popup
-            showFilterMenuOptions={false} // ✅ hides "StartsWith/Contains"
-            showFilterOperator={false} // ✅ hides AND/OR
-            showFilterMatchModes={false} // ✅ hides match mode dropdown
-            showAddButton={false} // ✅ hides "+ Add Rule"
+            filterField="refUserStatus"
+            showFilterMenu={true}
+            showFilterMenuOptions={false}
+            showFilterOperator={false}
+            showFilterMatchModes={false}
+            showAddButton={false}
             body={(row) => (
               <ButtonsLabel className="h-8 lg:h-8" variant="primary">
-                {row.status}
+                {row.refUserStatus ? `Active` : `Inactive`}
               </ButtonsLabel>
             )}
             filterElement={(options) => (
@@ -595,7 +694,7 @@ const Subtrainer: React.FC<SubtrainerProps> = () => {
             header="Action"
             body={() => (
               <ButtonsLabel
-                onClick={() => setEditRegistrationPopup(true)}
+                onClick={() => {setEditRegistrationPopup(true)}}
                 className="h-8 lg:h-8"
                 variant="primary"
               >

@@ -2,7 +2,10 @@ import type { HandoverResponse } from "@/Interfaces/RegisterStudentInterface";
 import { decrypt, encrypt } from "@/lib/Helper";
 import axios from "axios";
 import { tokenService } from "./tokenService";
-import type { NewSubtrainerRegistrationFormData } from "@/Interfaces/SubtrainerInterface";
+import type {
+  getSubtrainerResponse,
+  NewSubtrainerRegistrationFormData,
+} from "@/Interfaces/SubtrainerInterface";
 
 export const SubtrainerService = {
   newSubtrainer: async (formData: NewSubtrainerRegistrationFormData) => {
@@ -34,6 +37,34 @@ export const SubtrainerService = {
     );
 
     const decryptedData: HandoverResponse = decrypt(
+      res.data.data,
+      res.data.token
+    );
+    tokenService.setToken(res.data.token);
+    return decryptedData;
+  },
+
+  getSubtrainer: async (id: number) => {
+    const token = localStorage.getItem("token");
+    const payload = encrypt(
+      {
+        id: id,
+      },
+      token
+    );
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/v1/subtrainer/`,
+      { encryptedData: payload },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const decryptedData: getSubtrainerResponse = decrypt(
       res.data.data,
       res.data.token
     );
