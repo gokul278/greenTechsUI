@@ -375,7 +375,7 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
         </div>
       </div>
 
-      {role?.id ? (
+      {true ? (
         <div className="w-full h-[92vh] overflow-y-auto">
           <Outlet />
         </div>

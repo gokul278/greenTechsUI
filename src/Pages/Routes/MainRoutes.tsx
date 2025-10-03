@@ -20,6 +20,8 @@ import Filter from "../Filter/Filter";
 import Groups from "../Groups/Groups";
 import Report from "../Reports/Report";
 import Recording from "../Recordings/Recording";
+import StudentPanel from "../StudentPanel/StudentPanel";
+import StudentSessions from "../StudentSessions/Studentsessions";
 
 export interface AppRoute {
   path?: string; // Made path optional
@@ -48,6 +50,10 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
     { path: "groups", element: <Groups /> },
     { path: "reports", element: <Report /> },
     { path: "recordings", element: <Recording /> },
+  ];
+  const studentPanelRoutes: AppRoute[] = [
+    { index: true, element: <Navigate to="student" replace /> },
+    { path: "student", element: <StudentSessions /> },
   ];
 
   const renderRoutes = (routes: AppRoute[]) => {
@@ -122,6 +128,16 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
             }
           >
             {renderRoutes(headtrainerRoutes)}
+          </Route>
+          <Route
+            path="/studentPanel"
+            element={
+              // <RoleProtectedRoute allowedRoles={["studentPanel"]}>
+                <MasterHeader />
+              // </RoleProtectedRoute>
+            }
+          >
+            {renderRoutes(studentPanelRoutes)}
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
