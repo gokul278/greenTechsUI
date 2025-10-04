@@ -1,5 +1,5 @@
-import React from "react";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 type ButtonVariant = "primary" | "neutral" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
@@ -48,13 +48,12 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        "inline-flex items-center cursor-pointer justify-center select-none focus:outline-none h-10 lg:h-12 text-[0.8rem] font-bold rounded-xl",
-        // sizeClasses[size],
+        "inline-flex items-center cursor-pointer justify-center select-none focus:outline-none w-full h-10 lg:h-12 text-[0.8rem] font-bold rounded-xl", // sizeClasses[size],
         variantClasses[variant],
         baseInset,
         hoverInset,
         activeInset,
-        fullWidth ? "w-full" : "w-auto",
+        fullWidth && "w-full" ,
         disabled && disabledClasses,
         className
       )}

@@ -20,7 +20,9 @@ import Filter from "../Filter/Filter";
 import Groups from "../Groups/Groups";
 import Report from "../Reports/Report";
 import Recording from "../Recordings/Recording";
-import StudentAttendence from "../Studentmodule/attendence";
+import StudentPanel from "../StudentPanel/StudentPanel";
+import StudentSessions from "../StudentSessions/Studentsessions";
+import StudentAttendence from "../Studentmodule/Attendence";
 import Reports from "../Studentmodule/report";
 
 export interface AppRoute {
@@ -51,13 +53,17 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
     { path: "reports", element: <Report /> },
     { path: "recordings", element: <Recording /> },
   ];
+  const studentPanelRoutes: AppRoute[] = [
+    { index: true, element: <Navigate to="dashboard" replace /> },
+    { path: "dashboard", element: <StudentPanel /> },
+  ];
 
 
   const subtrainerRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="student" replace /> },
     { path: "report", element: <Reports /> },
     { path: "permissions", element: <StudentAttendence/> },
-    { path: "register", element: <div>hi</div> },
+    { path: "sessions", element: <StudentSessions /> },
   ];
   const renderRoutes = (routes: AppRoute[]) => {
     return routes.map((route, index) => {
@@ -131,6 +137,16 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
             }
           >
             {renderRoutes(headtrainerRoutes)}
+          </Route>
+          <Route
+            path="/studentPanel"
+            element={
+              // <RoleProtectedRoute allowedRoles={["studentPanel"]}>
+                <MasterHeader />
+              // </RoleProtectedRoute>
+            }
+          >
+            {renderRoutes(studentPanelRoutes)}
           </Route>
           <Route
             path="/subtrainer"

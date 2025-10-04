@@ -59,9 +59,15 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
       //   path: "/admin/mail",
       // },
     ],
+    studentPanel:[
+      {
+        label: "Dashboard",
+        path: "/studentPanel/dashboard"
+      },
+    ],
     subtrainer:[
       { label: "Sessions",
-        path: "/subtrainer/session"
+        path: "/subtrainer/sessions"
       },
       {
         label: "Permissions",
@@ -106,7 +112,7 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
   };
   const { role, user } = useAuth();
 
-  const menus = role?.type ? roleMenus[role.type] || [] : roleMenus["subtrainer"];
+  const menus = role?.type ? roleMenus[role.type] || [] : roleMenus["studentPanel"];
   const [selectedMenu, setSelectedMenu] = useState<string>("");
 
   useEffect(() => {
