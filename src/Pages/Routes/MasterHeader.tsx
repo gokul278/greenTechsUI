@@ -65,7 +65,7 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
       },
       {
         label: "Permissions",
-        path: "/subtrainer/permission"
+        path: "/subtrainer/permissions"
       },
        {
         label: "Reports",
