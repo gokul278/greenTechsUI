@@ -59,6 +59,20 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
       //   path: "/admin/mail",
       // },
     ],
+    subtrainer:[
+      { label: "Sessions",
+        path: "/subtrainer/session"
+      },
+      {
+        label: "Permissions",
+        path: "/subtrainer/permission"
+      },
+       {
+        label: "Reports",
+        path: "/subtrainer/report"
+      }
+    ]
+    ,
     headtrainer: [
       {
         label: "Student",
@@ -92,7 +106,7 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
   };
   const { role, user } = useAuth();
 
-  const menus = role?.type ? roleMenus[role.type] || [] : [];
+  const menus = role?.type ? roleMenus[role.type] || [] : roleMenus["subtrainer"];
   const [selectedMenu, setSelectedMenu] = useState<string>("");
 
   useEffect(() => {
@@ -375,13 +389,11 @@ const MasterHeader: React.FC<MasterHeaderProps> = () => {
         </div>
       </div>
 
-      {role?.id ? (
+      {(
         <div className="w-full h-[92vh] overflow-y-auto">
           <Outlet />
         </div>
-      ) : (
-        <div>No Routes Configured</div>
-      )}
+      ) }
     </div>
   );
 };

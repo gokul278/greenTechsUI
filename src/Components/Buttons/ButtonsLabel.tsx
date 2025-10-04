@@ -48,13 +48,13 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        "inline-flex items-center cursor-pointer justify-center select-none focus:outline-none w-full h-10 lg:h-12 text-[0.8rem] font-bold rounded-xl",
+        "inline-flex items-center cursor-pointer justify-center select-none focus:outline-none h-10 lg:h-12 text-[0.8rem] font-bold rounded-xl",
         // sizeClasses[size],
         variantClasses[variant],
         baseInset,
         hoverInset,
         activeInset,
-        fullWidth && "w-full",
+        fullWidth ? "w-full" : "w-auto",
         disabled && disabledClasses,
         className
       )}

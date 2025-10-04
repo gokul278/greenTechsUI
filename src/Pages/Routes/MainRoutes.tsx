@@ -20,6 +20,8 @@ import Filter from "../Filter/Filter";
 import Groups from "../Groups/Groups";
 import Report from "../Reports/Report";
 import Recording from "../Recordings/Recording";
+import StudentAttendence from "../Studentmodule/attendence";
+import Reports from "../Studentmodule/report";
 
 export interface AppRoute {
   path?: string; // Made path optional
@@ -50,6 +52,13 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
     { path: "recordings", element: <Recording /> },
   ];
 
+
+  const subtrainerRoutes: AppRoute[] = [
+    { index: true, element: <Navigate to="student" replace /> },
+    { path: "report", element: <Reports /> },
+    { path: "permissions", element: <StudentAttendence/> },
+    { path: "register", element: <div>hi</div> },
+  ];
   const renderRoutes = (routes: AppRoute[]) => {
     return routes.map((route, index) => {
       const Element = route.element;
@@ -122,6 +131,16 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
             }
           >
             {renderRoutes(headtrainerRoutes)}
+          </Route>
+          <Route
+            path="/subtrainer"
+            element={
+             <div>
+                <MasterHeader />
+              </div>              
+            }
+          >
+            {renderRoutes(subtrainerRoutes)}
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

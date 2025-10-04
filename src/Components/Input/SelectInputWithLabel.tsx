@@ -20,6 +20,7 @@ interface SelectInputProps {
   disabled?: boolean;
   bgColor?: string;
   errorStatus?: boolean;
+  labelClassName?: string;
 }
 
 const SelectInputWithLabel: React.FC<SelectInputProps> = ({
@@ -34,11 +35,12 @@ const SelectInputWithLabel: React.FC<SelectInputProps> = ({
   disabled = false,
   bgColor = "#fff",
   errorStatus = false,
+  labelClassName="",
 }) => {
   return (
     <div className="w-full">
       {label.length > 0 && (
-        <label htmlFor={name} className="font-bold text-gray-700 mb-2 block">
+        <label htmlFor={name} className={cn("font-bold text-gray-700 mb-2 block", labelClassName)}>
           {label} {required && <span className="text-[red]">*</span>}
         </label>
       )}
