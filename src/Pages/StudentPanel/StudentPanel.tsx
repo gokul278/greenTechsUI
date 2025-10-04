@@ -1,16 +1,30 @@
 import Button from "@/Components/Buttons/ButtonsLabel";
 import { InputTextarea } from "primereact/inputtextarea";
-import React from "react";
+import React, { useState } from "react";
 interface StudentPanelProps {}
 
+type CourseItem = { label: string; value: string };
+
 const StudentPanel: React.FC<StudentPanelProps> = () => {
-  const courseData = [
+  const [courseData, setCourseData] = useState<CourseItem[]>([
     { label: "Course Name", value: "Azure" },
     { label: "Group Name", value: "Group 1" },
     { label: "Session Link", value: "https://session.example.com" },
     { label: "Recording Link", value: "https://recordings.example.com" },
     { label: "Notes", value: "View the available notes" },
-  ];
+  ]);
+
+  const [topics, setTopics] = useState(
+    [
+      "Virtual Machine",
+      "Azure Storage",
+      "Azure App Services",
+      "Networking in Azure",
+    ].map((t) => ({ name: t, checked: false }))
+  );
+
+  const [attendance, setAttendance] = useState<string>("");
+  const [feedback, setFeedback] = useState<string>("");
 
   return (
     <div className="p-4 lg:px-6 lg:py-4 xl:px-8 xl:py-6">
@@ -18,7 +32,6 @@ const StudentPanel: React.FC<StudentPanelProps> = () => {
       <p className="mt-4 mb-3 text-xl font-semibold">Group Information</p>
 
       <div className="flex flex-col gap-4 lg:w-4/5 xl:w-3/4">
-        {/* Mobile view: single box per row */}
         <div className="flex flex-col gap-4 md:hidden">
           {courseData.map((item, index) => (
             <div
@@ -33,16 +46,13 @@ const StudentPanel: React.FC<StudentPanelProps> = () => {
           ))}
         </div>
 
-        {/* Tablet/Desktop view: two-column layout */}
         <div className="hidden md:flex flex-col md:flex-row gap-5 justify-between rounded-2xl bg-[#00808054] p-4 shadow-md">
-          {/* Left column */}
           <div className="flex md:w-1/3 flex-col gap-6 rounded-2xl bg-white p-4 font-semibold text-[#008080] shadow-md">
             {courseData.map((item, index) => (
               <p key={index}>{item.label}</p>
             ))}
           </div>
 
-          {/* Right column */}
           <div className="flex md:w-2/3 flex-col gap-6 rounded-2xl bg-white p-4 shadow-md">
             {courseData.map((item, index) => (
               <p key={index} className="font-semibold">
@@ -55,36 +65,47 @@ const StudentPanel: React.FC<StudentPanelProps> = () => {
 
       <div className="mt-6">
         <p className="font-semibold text-xl">Topics</p>
-        {[
-          "Virtual Machine",
-          "Azure Storage",
-          "Azure App Services",
-          "Networking in Azure",
-        ].map((topic, index) => (
+        {topics.map((topic, index) => (
           <div key={index} className="mt-4 flex items-center gap-2">
             <input
               type="checkbox"
+              checked={topic.checked}
+              onChange={() => {
+                const copy = [...topics];
+                copy[index] = { ...copy[index], checked: !copy[index].checked };
+                setTopics(copy);
+              }}
               className="accent-teal-500 scale-150 cursor-pointer"
             />
-            <p className="font-semibold">{topic}</p>
+            <p className="font-semibold">{topic.name}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-6">
         <p className="font-semibold text-xl">Attendance</p>
-        <label className="md:w-3/5 mt-4 flex items-center gap-3 rounded-xl p-3 shadow-md cursor-pointer bg-[#ABD4D4]">
+        <label
+          className="md:w-3/5 mt-4 flex items-center gap-3 rounded-xl p-3 shadow-md cursor-pointer bg-[#ABD4D4]"
+          onClick={() => setAttendance("attended")}
+        >
           <input
             type="radio"
             name="attendance"
+            checked={attendance === "attended"}
+            onChange={() => setAttendance("attended")}
             className="accent-teal-600 scale-150"
           />
           <p className="font-semibold">Attended</p>
         </label>
-        <label className="md:w-3/5 mt-4 flex items-center gap-3 rounded-xl p-3 shadow-md cursor-pointer bg-[#ABD4D4]">
+        <label
+          className="md:w-3/5 mt-4 flex items-center gap-3 rounded-xl p-3 shadow-md cursor-pointer bg-[#ABD4D4]"
+          onClick={() => setAttendance("not_attended")}
+        >
           <input
             type="radio"
             name="attendance"
+            checked={attendance === "not_attended"}
+            onChange={() => setAttendance("not_attended")}
             className="accent-teal-600 scale-150"
           />
           <p className="font-semibold ">Not Attended</p>
@@ -96,6 +117,8 @@ const StudentPanel: React.FC<StudentPanelProps> = () => {
         <InputTextarea
           placeholder="Enter your feedback"
           rows={4}
+          value={feedback}
+          onChange={(e) => setFeedback((e.target as HTMLTextAreaElement).value)}
           autoResize
           className="mt-4 w-full md:max-w-sm xl:max-w-lg rounded-3xl border-none outline-none p-4
              [box-shadow:inset_0_0_8px_rgba(0,0,0,0.15)]"
@@ -103,10 +126,25 @@ const StudentPanel: React.FC<StudentPanelProps> = () => {
       </div>
 
       <div className="mt-6 flex flex-col md:flex-row gap-4">
-        <Button variant="primary" className="md:w-fit md:px-6 text-md">
+        <Button
+          variant="primary"
+          className="md:w-fit md:px-6 text-md"
+          onClick={() => {
+            const selectedTopics = topics.filter((t) => t.checked).map((t) => t.name);
+            console.log({ attendance, feedback, selectedTopics, courseData });
+            alert("Feedback submitted");
+          }}
+        >
           Submit Feedback
         </Button>
-        <Button variant="primary" className="md:w-fit md:px-6 text-md">
+        <Button
+          variant="primary"
+          className="md:w-fit md:px-6 text-md"
+          onClick={() => {
+            console.log("Need one more time requested", { attendance, feedback });
+            alert("Request sent for one more time");
+          }}
+        >
           Need One More Time
         </Button>
       </div>

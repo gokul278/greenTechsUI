@@ -22,6 +22,8 @@ import Report from "../Reports/Report";
 import Recording from "../Recordings/Recording";
 import StudentPanel from "../StudentPanel/StudentPanel";
 import StudentSessions from "../StudentSessions/Studentsessions";
+import StudentAttendence from "../Studentmodule/Attendence";
+import Reports from "../Studentmodule/report";
 
 export interface AppRoute {
   path?: string; // Made path optional
@@ -53,9 +55,16 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
   ];
   const studentPanelRoutes: AppRoute[] = [
     { index: true, element: <Navigate to="student" replace /> },
-    { path: "student", element: <StudentSessions /> },
+    { path: "student", element: <StudentPanel /> },
   ];
 
+
+  const subtrainerRoutes: AppRoute[] = [
+    { index: true, element: <Navigate to="student" replace /> },
+    { path: "report", element: <Reports /> },
+    { path: "permissions", element: <StudentAttendence/> },
+    { path: "panel", element: <StudentSessions /> },
+  ];
   const renderRoutes = (routes: AppRoute[]) => {
     return routes.map((route, index) => {
       const Element = route.element;
@@ -138,6 +147,16 @@ const MainRoutes: React.FC<MainRoutesProps> = () => {
             }
           >
             {renderRoutes(studentPanelRoutes)}
+          </Route>
+          <Route
+            path="/subtrainer"
+            element={
+             <div>
+                <MasterHeader />
+              </div>              
+            }
+          >
+            {renderRoutes(subtrainerRoutes)}
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
